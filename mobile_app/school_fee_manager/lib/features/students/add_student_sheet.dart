@@ -57,10 +57,10 @@ class _AddStudentSheetState extends ConsumerState<AddStudentSheet> {
         'section_id':          _selectedSectionId,
         'transport_route_id':  _selectedRouteId,
         'avatar_url':          _avatarCtrl.text.trim().isEmpty ? null : _avatarCtrl.text.trim(),
-        'initial_balances': {
-          'tuition':   _safeDouble(_tuitionDueCtrl.text),
-          'transport': _safeDouble(_transportDueCtrl.text),
-          'other':     _safeDouble(_otherDueCtrl.text),
+        'balances': {
+          'tuition':   {'due': _safeDouble(_tuitionDueCtrl.text),   'paid': 0},
+          'transport': {'due': _safeDouble(_transportDueCtrl.text), 'paid': 0},
+          'other':     {'due': _safeDouble(_otherDueCtrl.text),     'paid': 0},
         },
       };
 

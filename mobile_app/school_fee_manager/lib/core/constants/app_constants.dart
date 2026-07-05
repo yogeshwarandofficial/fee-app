@@ -8,7 +8,7 @@ class AppConstants {
   /// Base URL for the backend REST API.
   /// In development, use your machine's local IP (not localhost) when running
   /// on a physical Android/iOS device. For emulators, 10.0.2.2 maps to host.
-  static const String apiBaseUrl = 'http://10.114.38.118:5000/api';
+  static const String apiBaseUrl = 'https://fee-app-1js9.onrender.com/api';
 
   /// JWT token key used by flutter_secure_storage.
   static const String jwtTokenKey = 'jwt_token';
