@@ -14,7 +14,7 @@ class AppConstants {
   static const String jwtTokenKey = 'jwt_token';
 
   /// App display name.
-  static const String appName = 'MJR School Fee Manager';
+  static const String appName = 'MRT & ABR Matriculation School';
 
   /// Supported academic grades.
   static const List<String> grades = [

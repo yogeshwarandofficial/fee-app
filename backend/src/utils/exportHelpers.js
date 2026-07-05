@@ -42,7 +42,7 @@ const formatExportTimestamp = (date = new Date()) => {
  */
 const generateExcelBuffer = async (sheetName, columns, rows, filters = {}) => {
   const workbook  = new ExcelJS.Workbook();
-  workbook.creator  = 'MJR School Fee Manager';
+  workbook.creator  = 'MRT & ABR Matriculation School Fee Manager';
   workbook.created  = new Date();
   workbook.modified = new Date();
 
@@ -71,7 +71,7 @@ const generateExcelBuffer = async (sheetName, columns, rows, filters = {}) => {
   const titleRow = sheet.getRow(currentRow++);
   titleRow.height = 24;
   const titleCell = titleRow.getCell(1);
-  titleCell.value = `MJR School — ${sheetName}`;
+  titleCell.value = `MRT & ABR Matriculation School — ${sheetName}`;
   titleCell.font  = { bold: true, size: 14, color: { argb: `FF${HEADER_BG}` }, name: 'Calibri' };
   titleCell.alignment = { vertical: 'middle', horizontal: 'left' };
   sheet.mergeCells(titleRow.number, 1, titleRow.number, colCount);
@@ -189,7 +189,7 @@ const generateCsvString = (columns, rows, filters = {}) => {
   // ── Metadata comment block ─────────────────────────────────────────────────
   // CSV has no standard for metadata; we use '#' comment lines (widely
   // recognised by Excel, Google Sheets, and pandas).
-  lines.push(`# MJR School Fee Manager — Export`);
+  lines.push(`# MRT & ABR Matriculation School Fee Manager — Export`);
   lines.push(`# Generated: ${formatExportTimestamp()}`);
 
   const filterEntries = Object.entries(filters);

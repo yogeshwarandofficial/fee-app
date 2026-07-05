@@ -566,7 +566,7 @@ class _DashboardDrawer extends ConsumerWidget {
             decoration: BoxDecoration(color: Color(0xFF2563EB)), // match header blue
             child: Center(
               child: Text(
-                'MJR School\nFee Manager',
+                'MRT & ABR\nMatriculation School',
                 textAlign: TextAlign.center,
                 style: TextStyle(color: Colors.white, fontSize: 20, fontWeight: FontWeight.bold),
               ),

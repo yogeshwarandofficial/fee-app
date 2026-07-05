@@ -117,7 +117,7 @@ class _SplashScreen extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             const Text(
-              'MJR School',
+              'MRT & ABR\nMatriculation School',
               style: TextStyle(
                 fontSize: 28,
                 fontWeight: FontWeight.w700,

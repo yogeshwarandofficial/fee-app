@@ -22,7 +22,7 @@ function buildReminderMessage(student) {
   const lines = [
     `Dear Parent of *${full_name}*,`,
     ``,
-    `This is a gentle reminder from MJR School regarding the outstanding fee balance.`,
+    `This is a gentle reminder from MRT & ABR Matriculation School regarding the outstanding fee balance.`,
     ``,
     `📋 *Fee Summary:*`,
   ];
@@ -42,7 +42,7 @@ function buildReminderMessage(student) {
   lines.push(``);
   lines.push(`Kindly clear the dues at your earliest convenience.`);
   lines.push(`Thank you for your cooperation.`);
-  lines.push(`— MJR School Administration`);
+  lines.push(`— MRT & ABR Matriculation School Administration`);
 
   return lines.join('\n');
 }

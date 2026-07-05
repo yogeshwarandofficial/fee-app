@@ -126,7 +126,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen>
         ),
         const SizedBox(height: 20),
         const Text(
-          'MJR School',
+          'MRT & ABR\nMatriculation School',
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.w700,
