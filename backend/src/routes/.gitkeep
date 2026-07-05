@@ -1,0 +1,3 @@
+// Express routers will be added in Part 2 and beyond.
+// Each resource gets its own file, e.g.:
+//   authRoutes.js, studentRoutes.js, feeRoutes.js, paymentRoutes.js, etc.

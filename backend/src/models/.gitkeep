@@ -1,0 +1,3 @@
+// Mongoose models will be added in Part 2.
+// Each model gets its own file, e.g.:
+//   User.js, Student.js, FeeStructure.js, Payment.js, etc.

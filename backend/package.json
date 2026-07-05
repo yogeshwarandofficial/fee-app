@@ -1,0 +1,35 @@
+{
+  "name": "school-fee-manager-backend",
+  "version": "1.0.0",
+  "description": "Backend API for MJR School Fee Management System",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "nodemon src/server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "school",
+    "fee",
+    "management",
+    "api"
+  ],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "exceljs": "^4.4.0",
+    "express": "^5.2.1",
+    "helmet": "^8.2.0",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.7.3",
+    "morgan": "^1.11.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14"
+  }
+}

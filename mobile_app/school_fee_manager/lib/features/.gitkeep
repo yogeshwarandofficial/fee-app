@@ -1,0 +1,14 @@
+// Feature sub-folders will be added here in Parts 2 onwards.
+// Each feature follows this structure:
+//   /features
+//     /<feature_name>
+//       /data
+//         /<feature>_repository.dart
+//       /models
+//         /<feature>_model.dart
+//       /providers
+//         /<feature>_provider.dart
+//       /screens
+//         /<feature>_screen.dart
+//       /widgets
+//         /<feature>_widget.dart

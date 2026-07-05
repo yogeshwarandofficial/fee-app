@@ -1,0 +1,3 @@
+// Controllers will be added in Part 2 and beyond.
+// Each resource gets its own controller, e.g.:
+//   authController.js, studentController.js, feeController.js, paymentController.js, etc.
