@@ -106,16 +106,29 @@ const executeAllocation = async (req, res, next) => {
 
     // Execute atomic bulk update
     const updateField = `balances.${fee_category}.due`;
-    
+
+    // Build the update operation.
+    // For 'other' fee category we also push a custom_fees entry on each
+    // student so the per-student breakdown stays in sync — exactly what
+    // the individual addOtherFee endpoint does for a single student.
+    const updateOp = {
+      $inc: { [updateField]: amount },
+      // also set status to pending if they had cleared dues previously
+      $set: { status: 'pending' },
+    };
+
+    if (fee_category === 'other') {
+      updateOp.$push = {
+        custom_fees: {
+          fee_description: description.trim(),
+          amount,
+          status: 'pending',
+        },
+      };
+    }
+
     // updateMany is atomic per document and highly efficient
-    const updateResult = await Student.updateMany(
-      filter,
-      { 
-        $inc: { [updateField]: amount },
-        // also set status to pending if they had cleared dues previously
-        $set: { status: 'pending' }
-      }
-    );
+    const updateResult = await Student.updateMany(filter, updateOp);
 
     const matchedCount = updateResult.matchedCount;
 

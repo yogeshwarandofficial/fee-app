@@ -8,13 +8,36 @@ import 'package:school_fee_manager/features/students/student_provider.dart';
 
 // ─────────────────────────────────────────────────────────────────────────────
 // View Profile Bottom Sheet
+// Always fetches fresh data from the server so fee balances (e.g. Other) are
+// up-to-date even after a bulk allocation that wasn't yet reflected in the list.
 // ─────────────────────────────────────────────────────────────────────────────
-class StudentProfileSheet extends StatelessWidget {
-  const StudentProfileSheet({super.key, required this.student});
-  final Student student;
+class StudentProfileSheet extends ConsumerStatefulWidget {
+  const StudentProfileSheet({
+    super.key,
+    required this.studentId,
+    required this.studentName, // used for avatar letter while loading
+  });
+
+  final String studentId;
+  final String studentName;
+
+  @override
+  ConsumerState<StudentProfileSheet> createState() => _StudentProfileSheetState();
+}
+
+class _StudentProfileSheetState extends ConsumerState<StudentProfileSheet> {
+  @override
+  void initState() {
+    super.initState();
+    // Invalidate before the first build so fresh data is always fetched.
+    // Calling ref.invalidate() inside build() causes "setState during build".
+    ref.invalidate(studentDetailProvider(widget.studentId));
+  }
 
   @override
   Widget build(BuildContext context) {
+    final studentAsync = ref.watch(studentDetailProvider(widget.studentId));
+
     return DraggableScrollableSheet(
       initialChildSize: 0.65,
       minChildSize: 0.4,
@@ -26,76 +49,142 @@ class StudentProfileSheet extends StatelessWidget {
             color: AppTheme.surfaceColor,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
           ),
-          child: ListView(
-            controller: controller,
-            padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
-            children: [
-              // Handle bar
-              Center(
-                child: Container(
-                  width: 40,
-                  height: 4,
-                  margin: const EdgeInsets.only(bottom: 20),
-                  decoration: BoxDecoration(
-                    color: AppTheme.dividerColor,
-                    borderRadius: BorderRadius.circular(2),
+          child: studentAsync.when(
+            loading: () => ListView(
+              controller: controller,
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.dividerColor,
+                      borderRadius: BorderRadius.circular(2),
+                    ),
                   ),
                 ),
-              ),
-              // Avatar + Name
-              Row(
-                children: [
-                  CircleAvatar(
-                    radius: 28,
-                    backgroundColor: AppTheme.primaryColor.withAlpha(20),
-                    child: Text(
-                      student.fullName.isNotEmpty ? student.fullName[0].toUpperCase() : '?',
-                      style: const TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
-                        color: AppTheme.primaryColor,
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: AppTheme.primaryColor.withAlpha(20),
+                      child: Text(
+                        widget.studentName.isNotEmpty
+                            ? widget.studentName[0].toUpperCase()
+                            : '?',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 16),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(student.fullName,
-                            style: Theme.of(context).textTheme.headlineSmall),
-                        Text(student.studentId,
-                            style: Theme.of(context).textTheme.bodySmall),
-                      ],
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(widget.studentName,
+                              style: Theme.of(context).textTheme.headlineSmall),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 32),
+                const Center(child: CircularProgressIndicator()),
+              ],
+            ),
+            error: (err, _) => Center(
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: Text(
+                  'Failed to load profile:\n${err.toString().replaceAll('Exception: ', '')}',
+                  textAlign: TextAlign.center,
+                  style: const TextStyle(color: AppTheme.errorColor),
+                ),
+              ),
+            ),
+            data: (student) => ListView(
+              controller: controller,
+              padding: const EdgeInsets.fromLTRB(24, 12, 24, 32),
+              children: [
+                // Handle bar
+                Center(
+                  child: Container(
+                    width: 40,
+                    height: 4,
+                    margin: const EdgeInsets.only(bottom: 20),
+                    decoration: BoxDecoration(
+                      color: AppTheme.dividerColor,
+                      borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-                  _StatusBadge(isCleared: student.isCleared),
-                ],
-              ),
-              const SizedBox(height: 20),
-              const Divider(),
-              const SizedBox(height: 12),
-              // Info rows
-              _InfoRow(label: 'Class',  value: '${student.gradeName} — ${student.sectionName}'),
-              _InfoRow(label: 'Phone',  value: student.phoneNumber),
-              _InfoRow(
-                label: 'Transport',
-                value: student.transportRouteName ?? 'None',
-                valueColor: student.transportRouteName != null
-                    ? AppTheme.accentColor
-                    : AppTheme.textSecondary,
-                isBadge: student.transportRouteName != null,
-              ),
-              const SizedBox(height: 16),
-              const Divider(),
-              const SizedBox(height: 12),
-              Text('Fee Summary', style: Theme.of(context).textTheme.titleMedium),
-              const SizedBox(height: 8),
-              _InfoRow(label: 'Total Paid',    value: CurrencyFormatter.formatINR(student.balances.totalPaid)),
-              _InfoRow(label: 'Total Pending', value: CurrencyFormatter.formatINR(student.balances.totalDue),
-                  valueColor: student.balances.totalDue > 0 ? AppTheme.warningColor : AppTheme.successColor),
-              _InfoRow(label: 'Other Fee Items', value: '${student.customFees.length}'),
-            ],
+                ),
+                // Avatar + Name
+                Row(
+                  children: [
+                    CircleAvatar(
+                      radius: 28,
+                      backgroundColor: AppTheme.primaryColor.withAlpha(20),
+                      child: Text(
+                        student.fullName.isNotEmpty
+                            ? student.fullName[0].toUpperCase()
+                            : '?',
+                        style: const TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppTheme.primaryColor,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(student.fullName,
+                              style: Theme.of(context).textTheme.headlineSmall),
+                          Text(student.studentId,
+                              style: Theme.of(context).textTheme.bodySmall),
+                        ],
+                      ),
+                    ),
+                    _StatusBadge(isCleared: student.isCleared),
+                  ],
+                ),
+                const SizedBox(height: 20),
+                const Divider(),
+                const SizedBox(height: 12),
+                // Info rows
+                _InfoRow(label: 'Class',  value: '${student.gradeName} — ${student.sectionName}'),
+                _InfoRow(label: 'Phone',  value: student.phoneNumber),
+                _InfoRow(
+                  label: 'Transport',
+                  value: student.transportRouteName ?? 'None',
+                  valueColor: student.transportRouteName != null
+                      ? AppTheme.accentColor
+                      : AppTheme.textSecondary,
+                  isBadge: student.transportRouteName != null,
+                ),
+                const SizedBox(height: 16),
+                const Divider(),
+                const SizedBox(height: 12),
+                Text('Fee Summary', style: Theme.of(context).textTheme.titleMedium),
+                const SizedBox(height: 8),
+                _InfoRow(label: 'Total Paid',    value: CurrencyFormatter.formatINR(student.balances.totalPaid)),
+                _InfoRow(label: 'Total Pending', value: CurrencyFormatter.formatINR(student.balances.totalDue),
+                    valueColor: student.balances.totalDue > 0 ? AppTheme.warningColor : AppTheme.successColor),
+                _InfoRow(label: 'Tuition Due',   value: CurrencyFormatter.formatINR(student.balances.tuition.due)),
+                _InfoRow(label: 'Transport Due', value: CurrencyFormatter.formatINR(student.balances.transport.due)),
+                _InfoRow(label: 'Other Due',     value: CurrencyFormatter.formatINR(student.balances.other.due),
+                    valueColor: student.balances.other.due > 0 ? AppTheme.warningColor : AppTheme.successColor),
+                _InfoRow(label: 'Other Fee Items', value: '${student.customFees.length}'),
+              ],
+            ),
           ),
         );
       },

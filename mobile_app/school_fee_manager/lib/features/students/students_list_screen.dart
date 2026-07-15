@@ -860,7 +860,7 @@ class _StudentMenu extends ConsumerWidget {
               title: const Text('View Student Profile'),
               onTap: () => _open(
                 context,
-                StudentProfileSheet(student: student),
+                StudentProfileSheet(studentId: student.id, studentName: student.fullName),
               ),
             ),
             ListTile(
