@@ -46,6 +46,10 @@ app.get('/api/health', (req, res) => {
   res.json({ success: true, data: { status: 'ok' }, message: 'Server is running.' });
 });
 
+app.get('/', (req, res) => {
+  res.json({ success: true, message: 'API is running. Access endpoints via /api' });
+});
+
 const auth = require('./middleware/auth');
 
 // ─── Routes ───────────────────────────────────────────────────────────────────
